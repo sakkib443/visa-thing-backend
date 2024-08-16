@@ -105,7 +105,7 @@ export type TvisaType =
   | "Family Visa"
   | "Business Visa";
 
-export type VisaInfo = {
+export type TVisaInfo = {
   visaType: TvisaType;
   country: string;
   studentVisa?: TStudentVisaInfo;

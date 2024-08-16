@@ -1,14 +1,13 @@
-import { Router } from 'express';
-import { UserRoutes } from '../modules/user/user.route';
+import { Router } from "express";
+import { VisaInfoRoute } from "../modules/visaInformation/visaInformation.route";
 
 const router = Router();
 
 const moduleRoutes = [
   {
-    path: '/users',
-    route: UserRoutes,
+    path: "/visainfo",
+    route: VisaInfoRoute,
   },
- 
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
