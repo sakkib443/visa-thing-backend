@@ -8,10 +8,23 @@ const createVisaInfo = catchAsync(async (req, res, next) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
-    message: "user create is successfuly",
+    message: "visa is created successfuly",
+    data: result,
+  });
+});
+const singleVisaFind = catchAsync(async (req, res, next) => {
+  const { country } = req.params;
+  const result = await VisaInfoService.findSigleVisaInFoFromDB(
+    country as string
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "visa is retrived successfuly",
     data: result,
   });
 });
 export const VisaInfoController = {
   createVisaInfo,
+  singleVisaFind,
 };
