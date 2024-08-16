@@ -12,7 +12,17 @@ const createVisaInfo = catchAsync(async (req, res, next) => {
     data: result,
   });
 });
-const singleVisaFind = catchAsync(async (req, res, next) => {
+const getAllVisaInfo = catchAsync(async (req, res, next) => {
+  const result = await VisaInfoService.findVisaInFoFromDB();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "visa are retrived successfuly",
+    data: result,
+  });
+});
+
+const singleVisaInfo = catchAsync(async (req, res, next) => {
   const { country } = req.params;
   const result = await VisaInfoService.findSigleVisaInFoFromDB(
     country as string
@@ -26,5 +36,6 @@ const singleVisaFind = catchAsync(async (req, res, next) => {
 });
 export const VisaInfoController = {
   createVisaInfo,
-  singleVisaFind,
+  singleVisaInfo,
+  getAllVisaInfo,
 };

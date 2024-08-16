@@ -4,6 +4,7 @@ import { VisaInfoController } from "./visaInformation.controller";
 const router = Router();
 
 router.post("/create-visa", VisaInfoController.createVisaInfo);
-router.get("/:country", VisaInfoController.singleVisaFind);
+router.get("/", VisaInfoController.getAllVisaInfo);
+router.get("/:country", VisaInfoController.singleVisaInfo);
 
 export const VisaInfoRoute = router;

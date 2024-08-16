@@ -5,6 +5,10 @@ const createVisaInfoInToDB = async (payload: TVisaInfo) => {
   const result = await VisaInfoModel.create(payload);
   return result;
 };
+const findVisaInFoFromDB = async () => {
+  const result = await VisaInfoModel.find();
+  return result;
+};
 const findSigleVisaInFoFromDB = async (country: string) => {
   const result = await VisaInfoModel.findOne({ country });
   return result;
@@ -12,4 +16,5 @@ const findSigleVisaInFoFromDB = async (country: string) => {
 export const VisaInfoService = {
   createVisaInfoInToDB,
   findSigleVisaInFoFromDB,
+  findVisaInFoFromDB,
 };
