@@ -1,0 +1,3 @@
+
+
+const auth = (...requiredRole:TUserR)
