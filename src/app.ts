@@ -12,12 +12,12 @@ app.use(cors());
 // application routes
 app.use("/api", router);
 
-const test = async (req: Request, res: Response) => {
-  const a = 10;
-  res.send(a);
-};
+const apiCheck = async (req:Request,res:Response)=>{
+  const message = "Visathing backend server api running";
+  res.send(message)
+}
 
-app.get("/", test);
+app.get("/", apiCheck);
 
 //Global Error Handler
 // app.use(globalErrorHandler);
