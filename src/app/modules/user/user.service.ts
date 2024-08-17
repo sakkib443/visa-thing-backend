@@ -1,67 +1,89 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import httpStatus from 'http-status';
-import mongoose from 'mongoose';
-import config from '../../config';
-import AppError from '../../errors/AppError';
-import { TStudent } from '../student/student.interface';
-import { Student } from '../student/student.model';
-import { AcademicSemester } from './../academicSemester/academicSemester.model';
-import { TUser } from './user.interface';
-import { User } from './user.model';
-import { generateStudentId } from './user.utils';
+import { startSession } from "mongoose";
+import config from "../../config"
+import { IAdmin } from "../admin/admin.interface"
+import {  TUser } from "./user.interface"
+import { generateAdminId } from "./user.utils";
+import { Admin } from "../admin/admin.model";
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
-  // create a user object
-  const userData: Partial<TUser> = {};
+import httpStatus from "http-status";
+import { User } from "./user.model";
+import AppError from "../../errors/AppError";
 
-  //if password is not given , use deafult password
-  userData.password = password || (config.default_password as string);
 
-  //set student role
-  userData.role = 'student';
 
-  // find academic semester info
-  const admissionSemester = await AcademicSemester.findById(
-    payload.admissionSemester,
-  );
 
-  const session = await mongoose.startSession();
 
-  try {
+
+const createAdmin = async( admin:IAdmin, user:TUser):Promise<TUser|null>=>{
+  
+    if(!user.password){
+        user.password = config.default_admin_pass as string;
+    }
+
+    user.role='admin';
+
+    let newUserData = null;
+    const session = await startSession();
     session.startTransaction();
-    //set  generated id
-    userData.id = await generateStudentId(admissionSemester);
 
-    // create a user (transaction-1)
-    const newUser = await User.create([userData], { session }); // array
+    try{
+        const id = await generateAdminId();
+      
+        
+        user.id=id;
+        user.mobileNo=admin.mobileNo;
+        admin.id=id;
 
-    //create a student
-    if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+       
+        
+        const newAdmin = await Admin.create([admin],{session});
+
+       
+        
+        if(!newAdmin.length){
+            throw new AppError(httpStatus.BAD_REQUEST,"Failed to create admin");
+        }
+
+        user.admin = newAdmin[0]._id;
+
+      
+        
+        const newUser = await User.create([user],{session});
+       
+
+        if(!newUser){
+            throw new AppError(httpStatus.BAD_REQUEST,"Failed to create user");
+        }
+        newUserData = newUser[0];
+
+        await session.commitTransaction();
+       
+
+    }catch(error){
+        await session.abortTransaction();
+         throw error;
+    }finally{
+        await session.endSession();
     }
-    // set id , _id as user
-    payload.id = newUser[0].id;
-    payload.user = newUser[0]._id; //reference _id
+  
+    
 
-    // create a student (transaction-2)
+    if(newUserData){
+        newUserData = await User.findOne({id:newUserData.id}).populate('admin');
 
-    const newStudent = await Student.create([payload], { session });
 
-    if (!newStudent.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+        return newUserData;
     }
 
-    await session.commitTransaction();
-    await session.endSession();
+    return null;
 
-    return newStudent;
-  } catch (err: any) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw new Error(err);
-  }
-};
+}
 
-export const UserServices = {
-  createStudentIntoDB,
-};
+
+
+
+export const  UserServices ={
+    createAdmin,
+    
+    
+}

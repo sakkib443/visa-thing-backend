@@ -17,6 +17,18 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: true,
     },
+    passwordChangeAt:{
+      type:Date,
+     
+  },
+  admin:{
+    type:Schema.Types.ObjectId,
+    ref:"Admin",
+  },
+  user:{
+    type:Schema.Types.ObjectId,
+    ref:"User",
+  },
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -36,21 +48,45 @@ const userSchema = new Schema<TUser>(
   },
 );
 
-userSchema.pre('save', async function (next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; // doc
-  // hashing password and save into DB
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
+userSchema.statics.isUserExist = async function (
+  id?: string,
+  mobileNo?: string
+):Promise<TUser|null>{
+ return await User.findOne(
+     {
+         $or:[{id},{mobileNo}]
+     },
+     {id:1,password:1,role:1,needPasswordChange:1,status:1,isDeleted:1}
+ );
+};
 
-// set '' after saving password
-userSchema.post('save', function (doc, next) {
-  doc.password = '';
-  next();
-});
+
+userSchema.statics.isPasswordMatched =  async function(
+ givenPassword:string,
+ savedPassword:string,
+):Promise<boolean>{
+ return await bcrypt.compare(givenPassword,savedPassword);
+};
+
+
+userSchema.methods.changedPasswordAfterJwtIssed = function(
+ jwtTimestamp:number
+){
+ console.log({jwtTimestamp},"HELLO");
+ 
+}
+
+userSchema.pre('save', async function(next){
+ const user = this;
+ user.password = await bcrypt.hash(
+     user.password,
+     Number(config.bycrypt_salt_rounds)
+ );
+ if(!user.needsPasswordChange){
+     user.passwordChangeAt = new Date();
+ }
+ next();
+})
+
 
 export const User = model<TUser>('User', userSchema);
