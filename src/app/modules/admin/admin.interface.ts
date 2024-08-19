@@ -13,7 +13,10 @@ export interface IAdmin{
     email:string,
     mobileNo:string,
     address:string,
+    isDeleted: boolean;
 
 }
 
-export type AdminModel = Model<IAdmin,Record<string,unknown>>;
+export interface AdminModel extends Model<IAdmin>{
+    isUserExists(id: string): Promise<IAdmin | null>;
+};

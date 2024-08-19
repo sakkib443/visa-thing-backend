@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
 const userSchema = new Schema<TUser>(
   {
     id: {
@@ -22,7 +22,7 @@ const userSchema = new Schema<TUser>(
       type: Boolean,
       default: true,
     },
-    passwordChangeAt:{
+    passwordChangedAt:{
       type:Date,
      
   },
@@ -53,6 +53,21 @@ const userSchema = new Schema<TUser>(
   },
 );
 
+
+userSchema.pre('save', async function(next){
+  const user = this;
+  user.password = await bcrypt.hash(
+      user.password,
+      Number(config.bycrypt_salt_rounds)
+  );
+  if(!user.needsPasswordChange){
+      user.passwordChangedAt = new Date();
+  }
+  next();
+ })
+ 
+
+
 userSchema.statics.isUserExist = async function (
   id?: string,
   mobileNo?: string
@@ -67,31 +82,25 @@ userSchema.statics.isUserExist = async function (
 
 
 userSchema.statics.isPasswordMatched =  async function(
- givenPassword:string,
- savedPassword:string,
+  plainTextPassword:string,
+  hashedPassword:string,
 ):Promise<boolean>{
- return await bcrypt.compare(givenPassword,savedPassword);
+ return await bcrypt.compare(plainTextPassword,hashedPassword);
+};
+
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function(
+  passwordChangedTimestamp:Date,
+  jwtIssuedTimestamp:number,
+){
+  const passwordChangedTime = 
+  new Date(passwordChangedTimestamp).getTime()/1000;
+  return passwordChangedTime > jwtIssuedTimestamp; 
 };
 
 
-userSchema.methods.changedPasswordAfterJwtIssed = function(
- jwtTimestamp:number
-){
- console.log({jwtTimestamp},"HELLO");
- 
-}
-
-userSchema.pre('save', async function(next){
- const user = this;
- user.password = await bcrypt.hash(
-     user.password,
-     Number(config.bycrypt_salt_rounds)
- );
- if(!user.needsPasswordChange){
-     user.passwordChangeAt = new Date();
- }
- next();
-})
 
 
-export const User = model<TUser>('User', userSchema);
+
+
+
+export const User = model<TUser,UserModel>('User', userSchema);
