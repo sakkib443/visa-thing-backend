@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post('/login',validateRequest(AuthValidation.loginValidationSchema), AuthControllers.loginUser);
 
-router.post('/change-password',auth())
+// router.post('/change-password',auth())
 
 router.post('/forget-password',)  
 
