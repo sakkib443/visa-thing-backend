@@ -1,7 +1,7 @@
 
 
 export type TLoginUser = {
-    id:string;
+    id?:string;
     mobileNo:string;
     password:string;
 }

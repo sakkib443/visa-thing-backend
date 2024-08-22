@@ -7,7 +7,7 @@ export type TUser = {
   mobileNo:string;
   password: string;
   needsPasswordChange: boolean;
-  passwordChangeAt?:Date;
+  passwordChangedAt?:Date;
   role: 'admin' | 'user';
   admin?:Types.ObjectId | IAdmin;
   user?:Types.ObjectId ;
@@ -18,7 +18,7 @@ export type TUser = {
 
 export interface UserModel extends Model<TUser>{
   //instance methods for checking if the user exixt
-  isUserExitsByCustomId(id:string):Promise<TUser>;
+  isUserExist(id:string):Promise<TUser>;
 
   isPasswordMatched(
     plainTextPassword:string,
