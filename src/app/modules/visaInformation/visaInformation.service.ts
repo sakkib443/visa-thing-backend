@@ -10,7 +10,7 @@ const findVisaInFoFromDB = async () => {
   return result;
 };
 const findSigleVisaInFoFromDB = async (country: string) => {
-  const result = await VisaInfoModel.findOne({ country });
+  const result = await VisaInfoModel.find({ country });
   return result;
 };
 export const VisaInfoService = {
