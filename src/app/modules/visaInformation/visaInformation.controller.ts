@@ -13,13 +13,29 @@ const createVisaInfo = catchAsync(async (req, res, next) => {
   });
 });
 const getAllVisaInfo = catchAsync(async (req, res, next) => {
-  const result = await VisaInfoService.findVisaInFoFromDB();
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "visa are retrived successfuly",
-    data: result,
-  });
+  const { country, visa } = req.query;
+  console.log("get info", country);
+  if (country) {
+    const result = await VisaInfoService.searchVisaFromDB({
+      country,
+      visa,
+    } as unknown as string);
+    console.log("controller", result);
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "visa are retrived successfuly",
+      data: result,
+    });
+  } else {
+    const result = await VisaInfoService.findVisaInFoFromDB();
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "visa are retrived successfuly",
+      data: result,
+    });
+  }
 });
 
 const singleVisaInfo = catchAsync(async (req, res, next) => {
