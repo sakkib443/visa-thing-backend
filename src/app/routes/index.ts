@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { VisaInfoRoute } from "../modules/visaInformation/visaInformation.route";
-import { UserRoutes } from "../modules/user/user.route";
-import { AuthRoutes } from "../modules/auth/auth.route";
+import { userRoute } from "../modules/User/user.route";
+import { AuthRoute } from "../modules/Auth/auth.Route";
 
 const router = Router();
 
@@ -11,12 +11,12 @@ const moduleRoutes = [
     route: VisaInfoRoute,
   },
   {
-    path:"/users",
-    route:UserRoutes,
+    path: "/users",
+    route: userRoute,
   },
   {
-    path:"/auth",
-    route:AuthRoutes,
+    path: "/auth",
+    route: AuthRoute,
   },
 ];
 

@@ -14,7 +14,6 @@ const createVisaInfo = catchAsync(async (req, res, next) => {
 });
 const getAllVisaInfo = catchAsync(async (req, res, next) => {
   const { country, visa } = req.query;
-  console.log("get info", country);
   if (country) {
     const result = await VisaInfoService.searchVisaFromDB({
       country,
@@ -40,7 +39,6 @@ const getAllVisaInfo = catchAsync(async (req, res, next) => {
 
 const singleVisaInfo = catchAsync(async (req, res, next) => {
   const { country } = req.params;
-  console.log(req.params);
   const result = await VisaInfoService.findSigleVisaInFoFromDB(
     country as string
   );

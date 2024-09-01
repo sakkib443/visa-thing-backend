@@ -1,14 +1,12 @@
+import { Router } from "express";
+import { UserController } from "./user.controller";
+import validationRequset from "../../middleware/validationRequest";
+import { UserValidation } from "./user.validation";
 
-import  express from 'express';
-import { UserControler } from './user.controller';
-
-
-
-
-const router = express.Router();
-
-router.post('/create-admin',UserControler.createAdmin)
-
-
-
-export const UserRoutes = router;
+const router = Router();
+// router.post(
+//   "/signup",
+//   validationRequset(UserValidation.createUserValidationSchema),
+//   UserController.createUser
+// );
+export const userRoute = router;

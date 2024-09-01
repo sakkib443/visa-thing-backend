@@ -15,7 +15,6 @@ const findSigleVisaInFoFromDB = async (country: string) => {
 };
 const searchVisaFromDB = async (searchProduct: string) => {
   const regex = new RegExp(searchProduct, "i");
-  console.log(regex);
   const result = await VisaInfoModel.find({
     $or: [{ name: regex }, { visaType: regex }, { country: regex }],
   });

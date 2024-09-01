@@ -1,33 +1,18 @@
+import httpStatus from "http-status";
+import catchAsync from "../../utils/catchAsync";
+import { UserService } from "./user.service";
+import sendResponse from "../../utils/sendResponse";
 
-import { RequestHandler } from 'express-serve-static-core';
-import catchAsync from '../../utils/catchAsync';
-import { Request, Response } from 'express';
-import sendResponse from '../../utils/sendResponse';
-import httpStatus from 'http-status';
-import { UserServices } from './user.service';
-
-const createAdmin:RequestHandler= catchAsync(async(req:Request,res:Response)=>{
-
-    
-        const {admin,...userData}=req.body;
-          const result = await UserServices.createAdmin(admin,userData);
-
-        
-          
-
-        sendResponse(res,{
-            statusCode:httpStatus.OK,
-            success:true,
-            message:"Admin Created succesfully",
-            data:result,
-        })
-
-    }
-)
-
-
-
-export const  UserControler = {
-    createAdmin,
-   
-}
+const createUser = catchAsync(async (req, res) => {
+  console.log(req.body);
+  const result = await UserService.createUserIntoDB(req.body);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "User Create successfully",
+    data: result,
+  });
+});
+export const UserController = {
+  createUser,
+};
