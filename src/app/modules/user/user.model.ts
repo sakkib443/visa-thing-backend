@@ -1,8 +1,7 @@
 import { Schema, model } from "mongoose";
-import { TUser, UserModel } from "./user.interfase";
-import config from "../../config";
-import { user_role } from "./user.Constent";
+import { TUser, user_role, UserModel } from "./user.interfase";
 import bcryptjs from "bcryptjs";
+import config from "../../config";
 
 const UserSchema = new Schema<TUser, UserModel>(
   {
@@ -49,6 +48,5 @@ UserSchema.statics.isPasswordMatched = async function (
 ) {
   return await bcryptjs.compare(plainTextPassword, heshTextPassword);
 };
-// Create and export the User model
 // Create and export the User model
 export const User = model<TUser, UserModel>("User", UserSchema);

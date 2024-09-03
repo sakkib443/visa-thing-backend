@@ -1,12 +1,13 @@
 import httpStatus from "http-status";
-
-import AppError from "../../errors/AppError";
-
-import config from "../../config";
-import { TUserLogin } from "./auth.interfase";
-import { accesstoken } from "./auth.utls";
 import { TUser } from "../User/user.interfase";
 import { User } from "../User/user.model";
+import { TUserLogin } from "./auth.interfase";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import config from "../../config";
+import { accesstoken } from "./auth.utls";
+import AppError from "../../errors/AppError";
+import { error } from "console";
 
 const register = async (payload: TUser) => {
   const user = await User.findOne({ email: payload.email });
@@ -21,11 +22,15 @@ const register = async (payload: TUser) => {
 const loginUser = async (payload: TUserLogin) => {
   const user = await User.isUserExistsByCustomId(payload.email);
 
+  // const isUserExists = await User.findOne({ email: payload.email }).select(
+  //   "password"
+  // );
+  // console.log(user);
   if (!user) {
-    throw new AppError(httpStatus.NOT_EXTENDED, "This User not found");
+    throw new Error("This User not found");
   }
   if (!(await User.isPasswordMatched(payload.password, user.password))) {
-    throw new AppError(httpStatus.FORBIDDEN, "wrong password !");
+    throw new Error("wrong password !");
   }
 
   const jwtPayload = {

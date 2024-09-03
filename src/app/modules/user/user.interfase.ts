@@ -1,5 +1,5 @@
 import mongoose, { Document, Model } from "mongoose";
-import { user_role } from "./user.Constent";
+export const user_role = { admin: "admin", user: "user" } as const;
 
 export type Tuser_role = keyof typeof user_role;
 
